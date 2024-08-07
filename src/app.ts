@@ -6,8 +6,6 @@ import morgan from 'morgan'
 import compression from 'compression'
 import helmet from 'helmet'
 
-
-
 const app = express()
 
 // init middleware
