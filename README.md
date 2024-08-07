@@ -1,5 +1,8 @@
 
 # TEA SHOP BACKEND
+## Requirements
+- MongoDB installed and running on your local machine
+- Node.js installed
 ## Installation
 1. Clone the repository:
 ```
