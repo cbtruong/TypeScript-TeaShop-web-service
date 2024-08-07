@@ -12,3 +12,13 @@ git clone -b backend https://github.com/cbtruong/TypeScript-TeaShop.git
 ```
 cd TypeScript-TeaShop
 ```
+3. Install dependencies:
+```
+npm install
+```
+4. Set up environment variables:
+Create a `.env` file in the root directory and add necessary configuration variables.
+5. Run the project:
+```
+npm start
+```
