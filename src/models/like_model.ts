@@ -1,12 +1,9 @@
 
 import mongoose, { Schema, Document } from 'mongoose';
-import { IBlog } from './blog_model';
-import { IUser } from './user_model';
 
 export interface ILike extends Document {
-  _id: mongoose.Schema.Types.ObjectId;
-  blog_id: IBlog['_id'];
-  user_id: IUser['_id'];
+  blog_id: mongoose.Schema.Types.ObjectId;
+  user_id: mongoose.Schema.Types.ObjectId;
 }
 
 const likeSchema: Schema<ILike> = new mongoose.Schema({

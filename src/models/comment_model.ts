@@ -1,13 +1,10 @@
 
 import mongoose, { Schema, Document } from 'mongoose';
-import { IProduct } from './product_model';
-import { IUser } from './user_model';
 
 export interface IComment extends Document {
-  _id: mongoose.Schema.Types.ObjectId;
-  user_id: IUser['_id'];
-  product_id: IProduct['_id'];
-  blog_id: IProduct['_id'];
+  user_id: mongoose.Schema.Types.ObjectId
+  product_id: mongoose.Schema.Types.ObjectId
+  blog_id: mongoose.Schema.Types.ObjectId
   content: string;
   create_date: Date;
 }

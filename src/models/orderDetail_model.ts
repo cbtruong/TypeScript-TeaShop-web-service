@@ -1,12 +1,9 @@
 
 import mongoose, { Schema, Document } from 'mongoose';
-import { IOrder } from './order_model';
-import { IProduct } from './product_model';
 
 export interface IOrderDetail extends Document {
-  _id: mongoose.Schema.Types.ObjectId;
-  order_id: IOrder['_id'];
-  product_id: IProduct['_id'];
+  order_id: mongoose.Schema.Types.ObjectId;
+  product_id: mongoose.Schema.Types.ObjectId;
   current_price: number;
   quantity: number;
   create_date: Date;

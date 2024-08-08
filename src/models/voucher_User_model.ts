@@ -3,9 +3,8 @@ import { IUser } from "./user_model";
 import { IVouchers } from "./voucher_model";
 
 export interface IVoucherUser extends Document {
-  _id: mongoose.Types.ObjectId;
-  user_id: IUser['_id']
-  voucher_id: IVouchers['_id'];
+  user_id: mongoose.Schema.Types.ObjectId
+  voucher_id: mongoose.Schema.Types.ObjectId
 }
 
 const voucherUserSchema: Schema<IVoucherUser> = new mongoose.Schema({

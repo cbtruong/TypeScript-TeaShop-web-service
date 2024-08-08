@@ -1,7 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
 export interface IVouchers extends Document {
-  _id: mongoose.Schema.Types.ObjectId;
   name: string;
   type: string;
   discount_percent: number;

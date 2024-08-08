@@ -1,11 +1,9 @@
 
 import mongoose, { Schema, Document } from 'mongoose';
 import { IUser } from './user_model';
-import { IComment } from './comment_model';
 
 export interface IBlog extends Document {
-  _id: mongoose.Schema.Types.ObjectId;
-  comment_id: IComment['_id'];
+  comment_id: mongoose.Schema.Types.ObjectId;
   user_id: IUser['_id'];
   title: string;
   description: string;

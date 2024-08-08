@@ -1,7 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
 export interface ICategory extends Document {
-  _id: mongoose.Schema.Types.ObjectId;
   name: string;
   state: boolean;
 }

@@ -1,9 +1,7 @@
 import mongoose, { Schema } from "mongoose";
-import { IProduct } from "./product_model";
 
 export interface IImagesProduct extends Document {
-  _id: mongoose.Types.ObjectId;
-  tea_id: IProduct['_id'];
+  product_id: mongoose.Schema.Types.ObjectId;
   url: string;
   description: string;
   upload_date: Date;
@@ -11,7 +9,7 @@ export interface IImagesProduct extends Document {
 }
 
 const imagesProductSchema: Schema<IImagesProduct> = new mongoose.Schema({
-  tea_id: { type: Schema.Types.ObjectId, require: true },
+  product_id: { type: Schema.Types.ObjectId, require: true },
   url: { type: String, require: true },
   description: { type: String },
   upload_date: { type: Date, default: Date.now },

@@ -3,13 +3,12 @@ import mongoose, { Schema } from "mongoose";
 import { ICategory } from "./category_model";
 
 export interface IProduct extends Document {
-  _id: mongoose.Schema.Types.ObjectId; // Use Mongoose's ObjectId type
   name: string;
   price: number;
   cost: number;
   description: string;
   size: Array<string>;
-  category: ICategory['_id']; // Reference Category model's _id
+  category: mongoose.Schema.Types.ObjectId; // Reference Category model's _id
   quantity: number;
   ingredient: Array<string>;
   fits: Array<string>;

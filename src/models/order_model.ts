@@ -4,8 +4,7 @@ import { IUser } from './user_model';
 
 
 export interface IOrder extends Document {
-  _id: mongoose.Types.ObjectId;
-  user_id: IUser['_id'];
+  user_id: mongoose.Schema.Types.ObjectId;
   recipient_address: string;
   recipient_phone_number: string;
   status_order: string;
