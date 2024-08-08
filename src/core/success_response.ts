@@ -1,36 +1,26 @@
 
 import { Response } from 'express';
-
-// Define the StatusCode enum
-enum StatusCode {
-  OK = 200,
-  CREATED = 201
-}
-
-// Define the ReasonStatusCode enum
-enum ReasonStatusCode {
-  CREATED = 'Created',
-  OK = 'Success'
-}
+import StatusCodes from '../untils/http_status_Code/status_codes';
+import ReasonPhrases from '../untils/http_status_Code/reason_phrases';
 
 // Define the interface for the SuccessResponse constructor parameters
 interface SuccessResponseParams {
   message?: string;
-  statusCode?: StatusCode;
-  reasonStatusCode?: ReasonStatusCode;
+  statusCode?: number;
+  reasonStatusCode?: string;
   metadata?: Record<string, any>;
 }
 
 // Define the SuccessResponse class
 class SuccessResponse {
   message: string;
-  status: StatusCode;
+  status: number;
   metadata: Record<string, any>;
 
   constructor({
     message,
-    statusCode = StatusCode.OK,
-    reasonStatusCode = ReasonStatusCode.OK,
+    statusCode = StatusCodes.OK,
+    reasonStatusCode = ReasonPhrases.OK,
     metadata = {}
   }: SuccessResponseParams) {
     this.message = message ?? reasonStatusCode;
@@ -54,8 +44,8 @@ class OK extends SuccessResponse {
 class CREATED extends SuccessResponse {
   constructor({
     message,
-    statusCode = StatusCode.CREATED,
-    reasonStatusCode = ReasonStatusCode.CREATED,
+    statusCode = StatusCodes.CREATED,
+    reasonStatusCode = ReasonPhrases.OK,
     metadata
   }: SuccessResponseParams) {
     super({ message, statusCode, reasonStatusCode, metadata });

@@ -12,6 +12,8 @@ interface CustomRequest extends Request {
 
 const checkApiKey = async (req: CustomRequest, res: Response, next: NextFunction) => {
   try {
+    // create new api key
+    //const newApiKey = await new ApiKeyService().createApiKey(['read'])
     const key = req.headers[HEADER.API_KEY]?.toString()
     if (!key) {
       return res.status(403).json({

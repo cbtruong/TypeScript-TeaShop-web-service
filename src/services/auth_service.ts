@@ -1,8 +1,9 @@
 
-import { BadRequestError, ConflictRequestError } from '../core/error_response';
+import { AuthFailureError, BadRequestError, ConflictRequestError } from '../core/error_response';
 import KeyTokenService from './keyToken_service';
 import UserService from './user_service';
 import crypto from 'crypto';
+import bcrypt from 'bcrypt'
 
 interface RegisterParams {
   email: string;
@@ -27,8 +28,13 @@ class AuthService {
   }
 
   public async login({ email, password }: RegisterParams) {
+    // check user exists
     const user = await UserService.findUserByEmail(email);
     if (!user) throw new BadRequestError('Sorry, your account has not been registered. Please sign up to continue.');
+
+    // compare password
+    const match = await bcrypt.compare(password, user.password)
+    if (!match) throw new AuthFailureError('AuthFailure error')
 
     // Create key pair
     const { publicKey, privateKey } = this.createKeyPair();
