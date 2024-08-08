@@ -22,7 +22,7 @@ const userSchema: Schema<IUser> = new mongoose.Schema({
   last_name: { type: String, },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true }, // if register by google auto create password}
-  phone: { type: String, required: true },
+  phone: { type: String },
   image: { type: String },
   types_customer: { type: String },
   address: { type: String },
