@@ -27,6 +27,45 @@ class AuthService {
     return { publicKey, privateKey };
   }
 
+  public async login({ email, password }: RegisterParams) {
+    try {
+      const user = await UserService.findUserByEmail(email)
+      if (!user) {
+        return {
+          message: `Sorry, your account has not been registered. Please sign up to continue.`
+        }
+      }
+
+      // Create key pair
+      const { publicKey, privateKey } = this.createKeyPair();
+
+      // Create tokens
+      const tokens = await new KeyTokenService().create({ email }, privateKey);
+      if (!tokens) {
+        return { message: 'Failed to create tokens' };
+      }
+
+      // Save key token
+      const newKeyToken = await new KeyTokenService().save(user._id, tokens.refreshToken);
+      if (!newKeyToken) {
+        return { message: 'Failed to save key token' };
+      }
+
+      return {
+        message: `Login successful! Welcome back.`,
+        metada: {
+          publicKey,
+          tokens
+        }
+      }
+
+    } catch (error) {
+      return {
+        message: 'Server Error'
+      }
+    }
+  }
+
   public async register({ email, password }: RegisterParams) {
     try {
       // Check email exists

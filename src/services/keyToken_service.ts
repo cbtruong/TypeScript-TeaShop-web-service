@@ -5,14 +5,13 @@ import mongoose from 'mongoose'
 class KeyTokenService {
   public async save(user_id: mongoose.Types.ObjectId, refreshToken: string) {
     try {
-      const newKeyToken = new KeyTokenModel({
-        user_id,
-        refreshToken,
-        refreshTokensUsed: [],
-      });
+      const filter = { user_id }
+      const update = { user_id, refreshToken }
+      const option = { new: true, upsert: true }
 
-      const savedKeyToken = await newKeyToken.save();
-      return savedKeyToken;
+      const updateKey = await KeyTokenModel.findOneAndUpdate(filter, update, option)
+      
+      return updateKey
     } catch (error) {
       console.error(error);
     }
