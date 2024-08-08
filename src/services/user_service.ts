@@ -36,7 +36,7 @@ class UserService {
       const user = await UserModel.findOne({ email: email }).lean()
       return user
     } catch (error) {
-      return null
+      console.log(error)
     }
   }
 }

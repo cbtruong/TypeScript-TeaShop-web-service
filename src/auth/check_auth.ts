@@ -31,16 +31,12 @@ const checkApiKey = async (req: CustomRequest, res: Response, next: NextFunction
     next()
   } catch (error) {
     console.log(error)
-    return res.status(500).json({
-      message: 'Server error'
-    })
   }
 }
 
 
 const checkPermissions = (permissions: string) => {
   return (req: CustomRequest, res: Response, next: NextFunction) => {
-    console.log(req.objApiKey.permissions)
     if (!req.objApiKey.permissions) {
       return res.status(403).json({
         message: 'Forbidden Error',
@@ -48,7 +44,6 @@ const checkPermissions = (permissions: string) => {
     }
 
     const validPermission = req.objApiKey.permissions.includes(permissions);
-    console.log(validPermission)
     if (!validPermission) {
       return res.status(403).json({
         message: 'Permission denied',
@@ -59,6 +54,13 @@ const checkPermissions = (permissions: string) => {
   }
 }
 
+type AsyncHandler = (req: Request, res: Response, next: NextFunction) => Promise<any>;
+
+const asyncHandler = (fn: AsyncHandler) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+  };
+};
 export {
-  checkApiKey, checkPermissions
+  checkApiKey, checkPermissions, asyncHandler
 }

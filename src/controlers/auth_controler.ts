@@ -1,25 +1,20 @@
 import { Request, Response } from "express"
 import AuthService from "../services/auth_service"
+import { CREATED, OK } from "../core/success_response"
 
 class AuthControler {
   public async login(req: Request, res: Response) {
-    try {
-      return res.status(200).json(await new AuthService().login(req.body))
-    } catch (error) {
-      return res.status(500).json({
-        message: 'Server Error'
-      })
-    }
+    new OK({
+      message: 'Login success',
+      metadata: await new AuthService().login(req.body)
+    }).send(res)
   }
 
   public async register(req: Request, res: Response) {
-    try {
-      return res.status(201).json(await new AuthService().register(req.body))
-    } catch (error) {
-      return res.status(500).json({
-        message: 'Server Error'
-      })
-    }
+    new CREATED({
+      message: 'Registered OK!',
+      metadata: await new AuthService().register(req.body)
+    }).send(res)
   }
 }
 
