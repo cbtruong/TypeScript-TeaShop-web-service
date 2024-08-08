@@ -4,7 +4,7 @@ import { IUser } from './user_model';
 
 export interface IBlog extends Document {
   comment_id: mongoose.Schema.Types.ObjectId;
-  user_id: IUser['_id'];
+  user_id: mongoose.Schema.Types.ObjectId;
   title: string;
   description: string;
   content: string;
