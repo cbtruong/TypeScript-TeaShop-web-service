@@ -1,6 +1,6 @@
 import JWT from 'jsonwebtoken'
 import KeyTokenModel from '../models/keyToken_model'
-import mongoose from 'mongoose'
+import mongoose, { deleteModel, ObjectId, Types } from 'mongoose'
 
 class KeyTokenService {
   public async save(user_id: mongoose.Types.ObjectId, refreshToken: string) {
@@ -10,7 +10,7 @@ class KeyTokenService {
       const option = { new: true, upsert: true }
 
       const updateKey = await KeyTokenModel.findOneAndUpdate(filter, update, option)
-      
+
       return updateKey
     } catch (error) {
       console.error(error);
@@ -33,6 +33,14 @@ class KeyTokenService {
     } catch (error) {
       console.log(error)
     }
+  }
+
+  static async findByUserId(userId: string) {
+    return await KeyTokenModel.findOne({ user_id: userId }).lean()
+  }
+
+  static async removeById(id: string) {
+    return await KeyTokenModel.findByIdAndDelete(id)
   }
 }
 
