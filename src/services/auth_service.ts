@@ -29,6 +29,7 @@ class AuthService {
 
     // compare password
     const match = await bcrypt.compare(password, user.password)
+    console.log(password)
     if (!match) throw new AuthFailureError('AuthFailure error')
 
     // Create key pair

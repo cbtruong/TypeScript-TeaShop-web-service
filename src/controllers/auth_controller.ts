@@ -26,25 +26,24 @@ class AuthControler {
       if (err) {
         return next(err);
       }
-    });
-    
-    new OK({
-      message: 'Logout success',
-      metadata: await new AuthService().logout(req.keyStore) || undefined
-    }).send(res);
+      new OK({
+        message: 'Logout success',
+        metadata: await new AuthService().logout(req.keyStore) || undefined
+      }).send(res);
 
+    });
   }
 
 
   public async login(req: Request, res: Response) {
-    return new OK({
+    new OK({
       message: 'Login success',
       metadata: await new AuthService().login(req.body)
     }).send(res)
   }
 
   public async register(req: Request, res: Response) {
-    return new CREATED({
+    new CREATED({
       message: 'Registered OK!',
       metadata: await new AuthService().register(req.body)
     }).send(res)

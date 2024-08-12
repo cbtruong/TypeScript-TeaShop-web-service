@@ -8,7 +8,7 @@ class UserService {
       first_name: first_name || extractUsernameFromEmail(email),
       last_name: last_name,
       email: email || google_id,
-      password: await bcrypt.hash(google_id, 10),
+      password: password == '' ? await bcrypt.hash(google_id, 10) : await bcrypt.hash(password, 10),
       image: image,
       types_customer: types_customer,
       role: role,

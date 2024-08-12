@@ -30,9 +30,10 @@ const authentication = asyncHandler(async (req: CustomRequest, res: Response, ne
 
   try {
     const publicKey = crypto.createPublicKey(req.body.publicKey)
-    const decodeUser = JWT.verify(accessToken, publicKey)
+    const decodeUser: any = JWT.verify(accessToken, publicKey)
 
-    // don't handler decodeUser
+    if (userId != decodeUser['user_id'])
+      throw new AuthFailureError('Invalid Request')
 
     req.keyStore = keyStore
     return next()
