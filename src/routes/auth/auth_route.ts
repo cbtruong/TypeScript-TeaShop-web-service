@@ -29,6 +29,6 @@ router.use(authentication)
 
 // logout
 router.post('/auth/logout', asyncHandler(new AuthControler().logout))
-
+router.post('/auth/password/reset', asyncHandler(new AuthControler().passwordReset))
 
 export default router

@@ -1,4 +1,4 @@
-import UserModel, { IUser } from "../models/user_model"
+import UserModel from "../models/user_model"
 import { extractUsernameFromEmail } from "../untils/email/emailUntil"
 import bcrypt from 'bcrypt'
 
@@ -34,6 +34,16 @@ class UserService {
   public static async findUserByEmail(email: string) {
     const user = await UserModel.findOne({ email: email }).lean()
     return user
+  }
+
+  public static async findUserById(user_id: string) {
+    const user = await UserModel.findOne({ _id: user_id }).lean()
+    return user
+  }
+
+  public static async updatePassword({ user_id, newPassword }: { user_id: string, newPassword: string }) {
+    const passwordHash = await bcrypt.hash(newPassword, 10)
+    return await UserModel.findOneAndUpdate({ _id: user_id }, { password: passwordHash }, {}).lean()
   }
 }
 export default UserService

@@ -109,6 +109,21 @@ class AuthService {
     };
 
   }
+
+  public async passwordReset({ currentPassword, newPassword, user_id }: { currentPassword: string, newPassword: string, user_id: string }) {
+    const user: any = await UserService.findUserById(user_id)
+
+    const match = await bcrypt.compare(currentPassword, user?.password)
+
+    if (!match) throw new AuthFailureError('Invalid password')
+
+    const saveNewPassword = await UserService.updatePassword({ user_id: user_id, newPassword: newPassword })
+
+    if (!saveNewPassword) {
+      throw new Error()
+    }
+    return {}
+  }
 }
 
 export default AuthService;

@@ -1,25 +1,21 @@
 import { NextFunction, Request, Response } from "express"
 import AuthService from "../services/auth_service"
 import { CREATED, OK } from "../core/success_response"
-import passport from "passport";
 
 interface CustomRequest extends Request {
   keyStore?: any;
+  newPassword?: string;
+  currentPassword?: string;
+  user_id?: string
 }
 
 class AuthControler {
-  public async googleLogin() {
-    return passport.authenticate('google', { scope: ['profile'] })
+  public async passwordReset(req: CustomRequest, res: Response) {
+    new OK({
+      message: 'Reset password success',
+      metadata: await new AuthService().passwordReset({ newPassword: req.body.newPassword, currentPassword: req.body.currentPassword, user_id: req.keyStore.user_id })
+    }).send(res)
   }
-
-  public async googleCallBack(req: Request, res: Response) {
-    return passport.authenticate('google', { failureRedirect: '/login' }),
-      function() {
-        // Successful authentication, redirect home.
-        res.json({ message: 'Login success', user: req.user })
-      }
-  }
-
 
   public async logout(req: CustomRequest, res: Response, next: NextFunction) {
     req.logout(async (err) => {
