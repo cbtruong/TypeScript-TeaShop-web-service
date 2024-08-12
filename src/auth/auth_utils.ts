@@ -31,12 +31,14 @@ const authentication = asyncHandler(async (req: CustomRequest, res: Response, ne
   try {
     const publicKey = crypto.createPublicKey(req.body.publicKey)
     const decodeUser = JWT.verify(accessToken, publicKey)
+
+    // don't handler decodeUser
+
     req.keyStore = keyStore
     return next()
   } catch (error) {
     throw error
   }
-
 })
 
 export {

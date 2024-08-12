@@ -3,12 +3,12 @@ import { extractUsernameFromEmail } from "../untils/email/emailUntil"
 import bcrypt from 'bcrypt'
 
 class UserService {
-  public async createNewUser({ first_name = '', last_name = '', email, password, image = '', types_customer = 'REGULAR', role = 'CUSTOMER', address = '', phone = '', state = '', google_id = '' }: any) {
+  public async createNewUser({ first_name = '', last_name = '', email = null, password = null, image = '', types_customer = 'REGULAR', role = 'CUSTOMER', address = '', phone = '', state = '', google_id = '' }: any) {
     const newUser = new UserModel({
       first_name: first_name || extractUsernameFromEmail(email),
       last_name: last_name,
-      email: email,
-      password: await bcrypt.hash(password, 10),
+      email: email || google_id,
+      password: await bcrypt.hash(google_id, 10),
       image: image,
       types_customer: types_customer,
       role: role,
@@ -26,6 +26,10 @@ class UserService {
   }
 
 
+  public static async findUserByGoogleId(google_id: string) {
+    const user = await UserModel.findOne({ google_id })
+    return user
+  }
 
   public static async findUserByEmail(email: string) {
     const user = await UserModel.findOne({ email: email }).lean()

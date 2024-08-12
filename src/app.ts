@@ -5,8 +5,9 @@ import express, { Request, Response, NextFunction } from 'express'
 import morgan from 'morgan'
 import compression from 'compression'
 import helmet from 'helmet'
-
+import session from 'express-session'
 import indexRouter from './routes/index_route'
+import passport from 'passport'
 
 const app = express()
 
@@ -16,6 +17,8 @@ app.use(compression())
 app.use(helmet())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+app.use(session({ secret: 'keyboard cat', resave: false, saveUninitialized: false, }));
+app.use(passport.authenticate('session'));
 
 // init database
 import './dbs/init_mongodb'

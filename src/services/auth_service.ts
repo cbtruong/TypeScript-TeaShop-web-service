@@ -1,8 +1,7 @@
-
-import { AuthFailureError, BadRequestError, ConflictRequestError, NotFoundError } from '../core/error_response';
+import { AuthFailureError, BadRequestError } from '../core/error_response';
 import KeyTokenService from './keyToken_service';
 import UserService from './user_service';
-import crypto from 'crypto';
+import crypto, { constants } from 'crypto';
 import bcrypt from 'bcrypt'
 import { IUser } from '../models/user_model';
 
@@ -81,6 +80,33 @@ class AuthService {
     const delKey = await KeyTokenService.removeById(String(keyStore._id))
     if (!delKey) throw new Error()
     return {}
+  }
+
+  public async loginGoogle({ sub, family_name, given_name, picture }: IGoogleResponse) { // check google id exists
+    let newUser = await UserService.findUserByGoogleId(sub)
+
+    if (!newUser) {
+      const saveUser = await new UserService().createNewUser({ google_id: sub, first_name: given_name, last_name: family_name, image: picture })
+      newUser = saveUser
+    }
+
+    // Create key pair
+    const { publicKey, privateKey } = this.createKeyPair();
+
+    // Create tokens
+    const tokens = await new KeyTokenService().create({ user_id: newUser?._id }, privateKey);
+    if (!tokens) throw new BadRequestError('Failed to create tokens');
+
+    // Save key token
+    const newKeyToken = await new KeyTokenService().save(newUser!._id, tokens.refreshToken);
+    if (!newKeyToken) throw new BadRequestError('Failed to save key token');
+
+    return {
+      _id: newUser._id,
+      publicKey,
+      tokens,
+    };
+
   }
 }
 
