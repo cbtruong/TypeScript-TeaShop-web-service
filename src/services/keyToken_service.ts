@@ -6,7 +6,7 @@ class KeyTokenService {
   public async save(user_id: mongoose.Types.ObjectId, refreshToken: string) {
     try {
       const filter = { user_id }
-      const update = { user_id, refreshToken }
+      const update = { user_id, refreshToken, refreshTokensUsed: [] }
       const option = { new: true, upsert: true }
 
       const updateKey = await KeyTokenModel.findOneAndUpdate(filter, update, option)
@@ -35,12 +35,37 @@ class KeyTokenService {
     }
   }
 
+  static async saveRefreshTokenUsed(oldToken: string, newToken: string) {
+    return await KeyTokenModel.updateOne(
+      { refreshToken: oldToken },
+      {
+        $set: { refreshToken: newToken },
+        $addToSet: { refreshTokensUsed: oldToken }
+      }
+    ).lean()
+  }
+
   static async findByUserId(userId: string) {
     return await KeyTokenModel.findOne({ user_id: userId }).lean()
   }
 
+  static async findByToken(token: string) {
+    return await KeyTokenModel.findOne({ refreshToken: token }).lean()
+  }
+
+  static async findInRefreshTokenUsed(token: string) {
+    return await KeyTokenModel.findOne({ refreshTokensUsed: { $in: [token] } });
+  }
+
   static async removeById(id: string) {
     return await KeyTokenModel.findByIdAndDelete(id)
+  }
+
+
+  static async deleteByUserId(user_id: string) {
+    console.log(user_id)
+    const result = await KeyTokenModel.deleteOne({ user_id: new Types.ObjectId(user_id) });
+    return result.deletedCount > 0; // Trả về true nếu xóa thành công
   }
 }
 

@@ -10,6 +10,10 @@ const router = express.Router()
 router.post('/auth/register', asyncHandler(new AuthControler().register))
 router.post('/auth/login', asyncHandler(new AuthControler().login))
 
+// forgot password 
+router.post('/auth/password/forgot', asyncHandler(new AuthControler().passwordForgot))
+
+
 // config passport
 import '../../configs/passport_config'
 
@@ -24,11 +28,11 @@ router.get('/auth/google/callback',
     res.redirect('/');
   });
 
-// authencation 
-router.use(authentication)
-
 // logout
-router.post('/auth/logout', asyncHandler(new AuthControler().logout))
-router.post('/auth/password/reset', asyncHandler(new AuthControler().passwordReset))
+router.post('/auth/logout', authentication, asyncHandler(new AuthControler().logout))
+router.post('/auth/password/reset', authentication, asyncHandler(new AuthControler().passwordReset))
+
+// check token
+router.post('/auth/token', asyncHandler(new AuthControler().checkToken))
 
 export default router

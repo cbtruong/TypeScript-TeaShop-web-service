@@ -2,6 +2,7 @@ import passportgoogleOauth20 from 'passport-google-oauth20'
 import passport from 'passport'
 import AuthService from '../services/auth_service';
 import { OK } from '../core/success_response';
+import { IGoogleResponse } from '../interface';
 
 const GoogleStrategy = passportgoogleOauth20.Strategy
 

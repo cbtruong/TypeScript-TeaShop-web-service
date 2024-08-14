@@ -15,6 +15,7 @@ export interface IUser extends Document {
   end_date: Date;
   state: string;
   google_id: string;
+  verify: boolean;
 }
 
 const userSchema: Schema<IUser> = new mongoose.Schema({
@@ -31,7 +32,8 @@ const userSchema: Schema<IUser> = new mongoose.Schema({
   create_date: { type: Date, default: Date.now },
   end_date: { type: Date }, // => ban_date
   state: { type: String }, // ?
-  google_id: { type: String }
+  google_id: { type: String },
+  verify: { type: Boolean, default: false }
 });
 
 const UserModel = mongoose.model<IUser>('User', userSchema)

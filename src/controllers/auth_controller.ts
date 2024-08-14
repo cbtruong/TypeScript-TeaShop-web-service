@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from "express"
 import AuthService from "../services/auth_service"
 import { CREATED, OK } from "../core/success_response"
+import { verify } from "../auth/auth_utils"
+
 
 interface CustomRequest extends Request {
   keyStore?: any;
@@ -10,6 +12,24 @@ interface CustomRequest extends Request {
 }
 
 class AuthControler {
+  public async checkToken(req: Request, res: Response) {
+    const { publicKey, refreshToken } = req.body
+    const decode: any = verify(refreshToken, publicKey)
+    const user_id = decode.user_id
+    new OK({
+      message: 'Refresh Token success',
+      metadata: await new AuthService().checkToken(refreshToken, user_id)
+    }).send(res)
+  }
+
+
+  public async passwordForgot(req: Request, res: Response) {
+    new OK({
+      message: 'Send mail success',
+      metadata: await new AuthService().passwordForgot(req.body.email)
+    }).send(res)
+  }
+
   public async passwordReset(req: CustomRequest, res: Response) {
     new OK({
       message: 'Reset password success',
