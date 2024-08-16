@@ -22,6 +22,17 @@ class AuthControler {
     }).send(res)
   }
 
+  public async resetPasswordWithToken(req: Request, res: Response) {
+    const user_id = req.query.user_id as string;
+    const token = req.query.token as string;
+    const password = req.body.password;
+
+    new OK({
+      message: 'Reset password success',
+      metadata: await new AuthService().resetPasswordWithToken(user_id, token, password)
+    }).send(res)
+
+  }
 
   public async passwordForgot(req: Request, res: Response) {
     new OK({

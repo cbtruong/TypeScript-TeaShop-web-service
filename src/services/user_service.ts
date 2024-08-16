@@ -3,7 +3,7 @@ import { extractUsernameFromEmail } from "../untils/email/emailUntil"
 import bcrypt from 'bcrypt'
 
 class UserService {
-  public async createNewUser({ first_name = '', last_name = '', email = null, password = null, image = '', types_customer = 'REGULAR', role = 'CUSTOMER', address = '', phone = '', state = '', google_id = '' }: any) {
+  public async createNewUser({ first_name = '', last_name = '', email = null, password = '', image = '', types_customer = 'REGULAR', role = 'CUSTOMER', address = '', phone = '', state = '', google_id = '' }: any) {
     const newUser = new UserModel({
       first_name: first_name || extractUsernameFromEmail(email),
       last_name: last_name,

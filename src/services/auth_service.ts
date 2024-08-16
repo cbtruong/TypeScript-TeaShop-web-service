@@ -7,7 +7,8 @@ import { IUser } from '../models/user_model';
 import transporter from '../configs/mail_config';
 import mailOption from '../helpers/mail_option';
 import { IGoogleResponse } from '../interface';
-import { ObjectId, Types } from 'mongoose';
+import KeyResetPasswordService from './keyResetPassword_service';
+import { Types } from 'mongoose';
 
 class AuthService {
   private createKeyPair() {
@@ -131,14 +132,20 @@ class AuthService {
     const user = await UserService.findUserByEmail(email);
     if (!user) throw new BadRequestError('Sorry, your account has not been registered. Please sign up to continue.');
 
-    const resetPasswordUrl = '...'
+    const findkey = await KeyResetPasswordService.findByUserId(user._id)
+    if (findkey) throw new ConflictRequestError()
+
+    const newToken: any = await new KeyResetPasswordService().create(user._id)
+    if (!newToken) throw new BadRequestError('keyStore error')
+
+    const link = `${process.env.FRONTEND_BASE_URL}/password-reset/${user._id}/${newToken.token}`;
 
     const mailOptions = mailOption({
       to: email,
       subject: 'Reset Your Password',
       text: `Hi,
 
-    To reset your password, please click on the following link: ${resetPasswordUrl}
+    To reset your password, please click on the following link: ${link}
 
     If you did not request a password reset, please ignore this email.
 
@@ -157,6 +164,22 @@ class AuthService {
   }
 
 
+  public async resetPasswordWithToken(user_id: string, token: string, newPassword: string) {
+    const findToken = await KeyResetPasswordService.findByUserIdAndToken(user_id, token)
+    if (!findToken) throw new BadRequestError('Invalid link or expired')
+
+    const saveNewPassword = await UserService.updatePassword({ user_id: user_id, newPassword: newPassword })
+
+    if (!saveNewPassword) {
+      throw new BadRequestError('Invalid link or expired')
+    }
+
+    const deleteTokenReset = await KeyResetPasswordService.deleteByUserId(user_id)
+    if (!deleteTokenReset) throw new ConflictRequestError()
+
+    return {}
+  }
+
   public async checkToken(token: string, user_id: string) {
     // Kiểm tra token có tồn tại không
     const findToken = await KeyTokenService.findByToken(token);
@@ -169,14 +192,11 @@ class AuthService {
       };
     }
 
-    // Tạo cặp khóa
     const { publicKey, privateKey } = this.createKeyPair();
 
-    // Tạo tokens mới
     const tokens = await new KeyTokenService().create({ user_id: user_id }, privateKey);
     if (!tokens) throw new BadRequestError('Failed to create tokens');
 
-    // Lưu refresh token mới và thêm token cũ vào danh sách đã sử dụng
     const saveKeyToken = await KeyTokenService.saveRefreshTokenUsed(token, tokens.refreshToken);
     console.log(saveKeyToken);
     if (!saveKeyToken) throw new BadRequestError('Failed to save key token');
@@ -186,9 +206,7 @@ class AuthService {
       tokens,
     };
   }
-
 }
-
 
 
 export default AuthService;

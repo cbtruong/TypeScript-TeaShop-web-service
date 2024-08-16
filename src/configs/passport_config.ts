@@ -11,7 +11,6 @@ const gooleConfig: { clientID: string, clientSecret: string, callbackURL: string
   clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
   callbackURL: "http://localhost:3000/auth/google/callback"!
 }
-
 passport.use(new GoogleStrategy(gooleConfig,
   async function(accessToken: string, refreshToken: string, profile: any, cb: any) {
     const infoResponse: IGoogleResponse = profile._json;

@@ -6,13 +6,14 @@ const router = express.Router()
 
 
 // check apikey
-//router.use(checkApiKey)
+router.use(checkApiKey)
 
 // check permission
-//router.use(checkPermissions('read'))
+router.use(checkPermissions('read'))
 
+// for auth router
+router.use('/', authRouter)
 
-// test api 
 router.get('/', (req: Request, res: Response) => {
   if (req.user)
     return res.status(200).json({
@@ -24,6 +25,4 @@ router.get('/', (req: Request, res: Response) => {
   })
 })
 
-// for auth router
-router.use('/', authRouter)
 export default router

@@ -11,6 +11,7 @@ import passport from 'passport'
 
 const app = express()
 
+
 // init middleware
 app.use(morgan('dev'))
 app.use(compression())
@@ -40,4 +41,6 @@ app.use((error: any, req: Request, res: Response, next: NextFunction) => {
     code: statusCode,
     message: error.message || 'Internal Server Error',
   });
-}); export default app
+});
+
+export default app
