@@ -23,6 +23,10 @@ app.use(passport.authenticate('session'));
 
 // init database
 import './dbs/init_mongodb'
+import swaggerDocs from './untils/swagger'
+
+// init swager
+swaggerDocs(app)
 
 // init routes
 app.use('/', indexRouter)

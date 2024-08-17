@@ -7,7 +7,77 @@ import '../../configs/passport_config' // config passport
 
 const router = express.Router()
 
-// register with local password
+/**
+ * @swagger
+ * paths:
+ *   /auth/register:
+ *     post:
+ *       summary: Register a new user with a local password
+ *       description: Registers a new user with a username and password.
+ *       tags:
+ *         - Auth
+ *       requestBody:
+ *         required: true
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 first_name:
+ *                   type: string
+ *                   example: John
+ *                 last_name:
+ *                   type: string
+ *                   example: Doe
+ *                 email:
+ *                   type: string
+ *                   example: john.doe@example.com
+ *                 password:
+ *                   type: string
+ *                   example: password123
+ *       responses:
+ *         201:
+ *           description: User registered successfully
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                   message:
+ *                     type: string
+ *                     example: User registered successfully
+ *                   user:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       first_name:
+ *                         type: string
+ *                       last_name:
+ *                         type: string
+ *                       email:
+ *                         type: string
+ *         400:
+ *           description: Bad request, invalid input
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                   error:
+ *                     type: string
+ *                     example: Invalid input
+ *         500:
+ *           description: Internal server error
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                   error:
+ *                     type: string
+ *                     example: Internal server error
+ */
 router.post('/auth/register', asyncHandler(new AuthControler().register))
 
 // login with logcal password
