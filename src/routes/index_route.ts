@@ -6,10 +6,10 @@ const router = express.Router()
 
 
 // check apikey
-router.use(checkApiKey)
+// router.use(checkApiKey)
 
 // check permission
-router.use(checkPermissions('read'))
+// router.use(checkPermissions('read'))
 
 // for auth router
 router.use('/', authRouter)

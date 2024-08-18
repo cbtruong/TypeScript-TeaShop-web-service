@@ -36,7 +36,7 @@ class AuthControler {
 
   public async passwordForgot(req: Request, res: Response) {
     new OK({
-      message: 'Send mail success',
+      message: 'Password reset email sent successfully',
       metadata: await new AuthService().passwordForgot(req.body.email)
     }).send(res)
   }

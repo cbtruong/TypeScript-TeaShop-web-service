@@ -113,6 +113,7 @@ class AuthService {
   }
 
   public async passwordReset({ currentPassword, newPassword, user_id }: { currentPassword: string, newPassword: string, user_id: string }) {
+
     const user: any = await UserService.findUserById(user_id)
 
     const match = await bcrypt.compare(currentPassword, user?.password)
@@ -124,7 +125,22 @@ class AuthService {
     if (!saveNewPassword) {
       throw new Error()
     }
-    return {}
+
+    // Create key pair
+    const { publicKey, privateKey } = this.createKeyPair();
+
+    // Create tokens
+    const tokens = await new KeyTokenService().create({ user_id: user._id }, privateKey);
+    if (!tokens) throw new BadRequestError('Failed to create tokens');
+
+    // Save key token
+    const saveKeyToken = await new KeyTokenService().save(user._id, tokens.refreshToken);
+    if (!saveKeyToken) throw new BadRequestError('Failed to save key token');
+
+    return {
+      publicKey,
+      tokens,
+    };
   }
 
   public async passwordForgot(email: string) {

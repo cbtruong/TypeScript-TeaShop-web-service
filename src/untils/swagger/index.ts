@@ -9,19 +9,34 @@ const options: swaggerJsdoc.Options = {
       title: 'TEA SHOP API',
       version: '1.0.0',
     },
-    tags: [
+    servers: [
       {
-        name: 'Auth',
-        description: 'Authentication related endpoints',
-      },
-      {
-        name: 'User',
-        description: 'User related endpoints'
-      },
-      {
-        name: 'Product',
-        description: 'User related endpoints'
+        url: 'http://localhost:3000'
       }
+    ],
+  },
+  components: {
+    securitySchemes: {
+      ApiKeyAuth: {
+        type: 'apiKey',
+        in: 'header',
+        name: 'x-api-key',
+      },
+      BearerAuth: {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+      },
+      cookieAuth: {
+        type: 'apikey',
+        in: 'cookie',
+        name: 'JSESSIONID'
+      }
+    },
+    security: [
+      { ApiKeyAuth: [] },
+      { BearerAuth: [] },
+      { cookieAuth: [] }
     ],
   },
   apis: [
