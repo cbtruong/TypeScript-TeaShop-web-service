@@ -26,6 +26,7 @@ class UserService {
   }
 
 
+
   public static async findUserByGoogleId(google_id: string) {
     const user = await UserModel.findOne({ google_id })
     return user

@@ -7,7 +7,8 @@ import JWT from "jsonwebtoken";
 
 const HEADER = {
   API_KEY: `x-api-key`,
-  ACCESS_TOKEN: `access-token`
+  ACCESS_TOKEN: `access-token`,
+  PUBLIC_KEY: `public-key`
 }
 
 interface CustomRequest extends Request { keyStore?: any; }
@@ -17,7 +18,13 @@ const authentication = asyncHandler(async (req: CustomRequest, res: Response, ne
   const accessToken = req.headers[HEADER.ACCESS_TOKEN]?.toString()
   if (!accessToken) throw new AuthFailureError('Invalid error')
 
-  const publicKey = crypto.createPublicKey(req.body.publicKey)
+  let publicKeyString = req.headers[HEADER.PUBLIC_KEY]?.toString()
+  if (!publicKeyString) throw new AuthFailureError('Public key not found');
+
+  // Remove unnecessary line breaks and whitespace
+  publicKeyString = publicKeyString.replace(/\\n/gm, '\n');
+
+  const publicKey = crypto.createPublicKey(publicKeyString)
 
   const decodeUser: any = JWT.verify(accessToken, publicKey)
 
@@ -29,9 +36,6 @@ const authentication = asyncHandler(async (req: CustomRequest, res: Response, ne
   // 3 - get  accessToken and check user in dbs
   const keyStoreUserId = await KeyTokenService.findByUserId(userId)
   if (!keyStoreUserId) throw new NotFoundError('Not found keyStore')
-
-  const keyStoreToken = await KeyTokenService.findByToken(accessToken)
-  if (!keyStoreToken) throw new NotFoundError('Not found keyStore')
 
   req.keyStore = keyStoreUserId
   return next()
