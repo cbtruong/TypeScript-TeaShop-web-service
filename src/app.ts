@@ -8,9 +8,12 @@ import helmet from 'helmet'
 import session from 'express-session'
 import indexRouter from './routes/index_route'
 import passport from 'passport'
+import path from 'path'
 
 const app = express()
 
+// public
+app.use('/images', express.static(path.join(__dirname, 'uploads')));
 
 // init middleware
 app.use(morgan('dev'))

@@ -12,8 +12,7 @@ const router = express.Router();
 // Image Storage Engine
 const storage: StorageEngine = multer.diskStorage({
   destination: (req: Request, file: Express.Multer.File, cb: (error: Error | null, destination: string) => void) => {
-    const uploadPath = path.join(__dirname, '../../uploads/users');
-    cb(null, uploadPath);
+    cb(null, './dist/src/uploads');
   },
   filename: (req: Request, file: Express.Multer.File, cb: (error: Error | null, filename: string) => void) => {
     const uniqueSuffix = `${Date.now()}${path.extname(file.originalname)}`;
@@ -26,6 +25,10 @@ const upload = multer({ storage });
 
 // Define a route for uploading avatars
 router.post('/user/upload-avatar', authentication, upload.single('avatar'), asyncHandler(new UserController().uploadAvatar));
+
+
+// Get avatar
+router.post('/user/get-avatar', authentication, asyncHandler(new UserController().getAvatar))
 
 export default router;
 

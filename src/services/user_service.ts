@@ -1,6 +1,8 @@
-import UserModel from "../models/user_model"
+import UserModel, { IUser } from "../models/user_model"
 import { extractUsernameFromEmail } from "../untils/email/emailUntil"
 import bcrypt from 'bcrypt'
+import fs from 'fs'
+import path from "path"
 
 class UserService {
   public async createNewUser({ first_name = '', last_name = '', email = null, password = '', image = '', types_customer = 'REGULAR', role = 'CUSTOMER', address = '', phone = '', state = '', google_id = '' }: any) {
@@ -12,7 +14,7 @@ class UserService {
       image: image,
       types_customer: types_customer,
       role: role,
-      status_active: true, // Giữ nguyên kiểu boolean
+      status_active: true,
       address: address,
       phone: phone,
       create_date: new Date(),
@@ -25,7 +27,27 @@ class UserService {
     return saveUser
   }
 
+  public static async uploadAvatar(user_id: string, fileName: string) {
+    const userInfo = await UserService.findUserById(user_id)
+    // get file path
+    const oldFilePath = `./dist/src/uploads/${userInfo?.image}`;
+    // delete old file
+    fs.unlink(oldFilePath, () => { })
 
+    const updatedUser = await UserModel.findByIdAndUpdate(
+      user_id,
+      { image: fileName },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      throw new Error('User not found');
+    }
+
+    return {
+      filePath: process.env.BASE_URL_BACKEND + '/images/' + fileName
+    }
+  }
 
   public static async findUserByGoogleId(google_id: string) {
     const user = await UserModel.findOne({ google_id })
