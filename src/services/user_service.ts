@@ -1,8 +1,8 @@
-import UserModel, { IUser } from "../models/user_model"
+import { Types } from "mongoose"
+import UserModel, { IUser, IUserAbout, IUserAdress, UserAboutModel, UserAddressModel } from "../models/user_model"
 import { extractUsernameFromEmail } from "../untils/email/emailUntil"
 import bcrypt from 'bcrypt'
 import fs from 'fs'
-import path from "path"
 
 class UserService {
   public async createNewUser({ first_name = '', last_name = '', email = null, password = '', image = '', types_customer = 'REGULAR', role = 'CUSTOMER', address = '', phone = '', state = '', google_id = '' }: any) {
@@ -50,7 +50,7 @@ class UserService {
   }
 
   public static async findUserByGoogleId(google_id: string) {
-    const user = await UserModel.findOne({ google_id })
+    const user = await UserModel.findOne({ google_id }).lean()
     return user
   }
 
@@ -67,6 +67,39 @@ class UserService {
   public static async updatePassword({ user_id, newPassword }: { user_id: string, newPassword: string }) {
     const passwordHash = await bcrypt.hash(newPassword, 10)
     return await UserModel.findOneAndUpdate({ _id: user_id }, { password: passwordHash }, {}).lean()
+  }
+}
+
+export class UserAddressServices {
+  public static async getAddress(user_id: string) {
+    const addressList = await UserAddressModel.find({ user_id }).lean()
+    return addressList || undefined
+  }
+
+  public static async addAddress(data: IUserAdress) {
+    const newAddress = new UserAddressModel(data)
+    const saveAddress = await newAddress.save()
+    return saveAddress
+  }
+
+
+  public static async updateAddress(address_id: string, data: IUserAdress) {
+    const updatedAddress = await UserAddressModel.findOneAndUpdate({ _id: address_id }, data, { new: true }).lean();
+    return updatedAddress || undefined;
+  }
+
+  public static async deleteAddress(address_id: string) {
+    return await UserAddressModel.deleteOne({ _id: address_id })
+  }
+}
+
+export class UserAboutServices {
+  public static async uploadAbout(data: IUserAbout) {
+    return await UserAboutModel.findOneAndUpdate(
+      { user_id: data.user_id },
+      { sessions: data.sessions },
+      { new: true, upsert: true, setDefaultsOnInsert: true }
+    ).lean()
   }
 }
 export default UserService

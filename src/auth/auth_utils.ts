@@ -7,7 +7,7 @@ import JWT from "jsonwebtoken";
 
 const HEADER = {
   API_KEY: `x-api-key`,
-  ACCESS_TOKEN: `access-token`,
+  ACCESS_TOKEN: `authorization`,
   PUBLIC_KEY: `public-key`
 }
 
@@ -16,7 +16,7 @@ interface CustomRequest extends Request { keyStore?: any; }
 const authentication = asyncHandler(async (req: CustomRequest, res: Response, next: NextFunction) => {
   // 1 - verifytoken console.log(req.headers)
   const accessToken = req.headers[HEADER.ACCESS_TOKEN]?.toString()
-  if (!accessToken) throw new AuthFailureError('Invalid error')
+  if (!accessToken) throw new AuthFailureError('Invalid error 1')
 
   let publicKeyString = req.headers[HEADER.PUBLIC_KEY]?.toString()
   if (!publicKeyString) throw new AuthFailureError('Public key not found');
