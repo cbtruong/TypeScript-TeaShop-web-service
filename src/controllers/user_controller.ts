@@ -3,6 +3,7 @@ import { BadRequestError } from '../core/error_response';
 import { CREATED, OK } from '../core/success_response';
 import UserService, { UserAboutServices, UserAddressServices } from '../services/user_service';
 import { IUserAbout, IUserAdress, UserAddressModel } from '../models/user_model';
+import { uploadToDrive } from '../configs/googleDriveAPI_config';
 
 interface CustomRequest extends Request {
   keyStore?: any;
@@ -13,10 +14,11 @@ class UserController {
     if (!req.file) {
       throw new BadRequestError('No file uploaded');
     }
-
+    const file = req.file
+    await uploadToDrive(file.filename, '12bKnrC5v1TCToklN3QT8bE4hRQLgxJ88', file.path, file.mimetype)
     new OK({
       message: 'File uploaded successfully',
-      metadata: await UserService.uploadAvatar(req.keyStore.user_id, req.file.filename)
+      metadata: await UserService.uploadAvatar(req.keyStore.user_id, file.filename)
     }).send(res);
   }
   public async getInfo(req: CustomRequest, res: Response) {
@@ -68,6 +70,13 @@ export class UserAboutController {
       message: "User about upload successfully!",
       metadata: await UserAboutServices.uploadAbout(data)
     }).send(res)
+  }
+
+  public async getAbout(req: CustomRequest, res: Response) {
+    new OK({
+      message: "Get user about successfully!",
+      metadata: {}
+    })
   }
 }
 

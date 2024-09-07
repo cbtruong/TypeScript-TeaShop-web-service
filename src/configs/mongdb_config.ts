@@ -4,9 +4,7 @@ interface AppConfig {
 }
 
 interface DbConfig {
-  name: string;
-  host: string;
-  port: number;
+  url: string
 }
 
 interface Config {
@@ -19,9 +17,7 @@ const DEV: Config = {
     port: Number(process.env.DEV_APP_PORT) || 3000
   },
   db: {
-    name: process.env.DEV_DB_NAME || 'TEA-SHOP-BACKEND-DEV',
-    host: process.env.DEV_DB_HOST || 'localhost',
-    port: Number(process.env.DEV_DB_PORT) || 27017
+    url: `mongodb+srv://xyzteashop:${process.env.MONGODB_PASSWORD_DEV}@dev.tuaej.mongodb.net/?retryWrites=true&w=majority&appName=dev`
   }
 }
 

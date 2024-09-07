@@ -2,6 +2,7 @@ import express, { Response, Request } from 'express'
 import authRouter from './auth/auth_route'
 import userRouter from './user/user_routes'
 import { checkApiKey, checkPermissions } from '../auth/check_auth'
+import multer from 'multer'
 
 const router = express.Router()
 

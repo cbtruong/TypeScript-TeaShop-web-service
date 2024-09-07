@@ -12,8 +12,7 @@ class Database {
 
   private async connect() {
     try {
-      const { host, name, port } = this.config.db
-      const connectString = `mongodb://${host}:${port}/${name}`
+      const connectString = this.config.db.url
       await mongoose.connect(connectString)
       console.log(`Mongodb connect success::`, connectString);
     } catch (error) {

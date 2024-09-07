@@ -46,7 +46,7 @@ class KeyTokenService {
   }
 
   static async findByAccessToken(token: string) {
-    return await KeyTokenModel.findOne({ accessToken: token }).lean()
+    return await KeyTokenModel.findOne({ refreshToken: token }).lean()
   }
 
   static async findByUserId(userId: string) {

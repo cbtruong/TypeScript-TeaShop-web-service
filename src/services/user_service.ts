@@ -101,5 +101,10 @@ export class UserAboutServices {
       { new: true, upsert: true, setDefaultsOnInsert: true }
     ).lean()
   }
+
+  public static async getAbout(user_id: string) {
+    const userAboutData = await UserAboutModel.findOne({ user_id: user_id })
+    return userAboutData
+  }
 }
 export default UserService
