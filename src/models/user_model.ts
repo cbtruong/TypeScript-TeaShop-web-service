@@ -15,6 +15,7 @@ export interface IUser extends Document {
   end_date: Date;
   state: string;
   google_id: string;
+  title: string;
 }
 
 const userSchema: Schema<IUser> = new mongoose.Schema({
@@ -32,6 +33,7 @@ const userSchema: Schema<IUser> = new mongoose.Schema({
   end_date: { type: Date }, // => ban_date
   state: { type: String }, // ?
   google_id: { type: String },
+  title: { type: String }
 });
 
 export interface IUserAdress extends Document {

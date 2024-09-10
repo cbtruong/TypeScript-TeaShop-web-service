@@ -35,5 +35,12 @@ router.delete('/user/delete-address', authentication, asyncHandler(new UserAddre
 router.post('/user/update-about', authentication, asyncHandler(new UserAboutController().updateAbout))
 //get user about
 router.get('/user/get-about', authentication, asyncHandler(new UserAboutController().getAbout))
+//
+//
+//
+//get info of account
+router.get('/user/my-account', authentication, asyncHandler(new UserController().getAccount))
+//update info for account
+router.post('/user/my-account', authentication, asyncHandler(new UserController().updateAccount))
 export default router;
 

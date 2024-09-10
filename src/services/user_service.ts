@@ -1,8 +1,8 @@
-import { Types } from "mongoose"
 import UserModel, { IUser, IUserAbout, IUserAdress, UserAboutModel, UserAddressModel } from "../models/user_model"
 import { extractUsernameFromEmail } from "../untils/email/emailUntil"
 import bcrypt from 'bcrypt'
-import fs from 'fs'
+import { deleteFile } from "../untils"
+import { deleteOnDrive } from "../configs/googleDriveAPI_config"
 
 class UserService {
   public async createNewUser({ first_name = '', last_name = '', email = null, password = '', image = '', types_customer = 'REGULAR', role = 'CUSTOMER', address = '', phone = '', state = '', google_id = '' }: any) {
@@ -20,23 +20,21 @@ class UserService {
       create_date: new Date(),
       end_date: new Date(),
       state: state,
-      google_id: google_id
+      google_id: google_id,
+      title: "",
     })
 
     const saveUser = await newUser.save()
     return saveUser
   }
 
-  public static async uploadAvatar(user_id: string, fileName: string) {
-    const userInfo = await UserService.findUserById(user_id)
-    // get file path
-    const oldFilePath = `./dist/src/uploads/${userInfo?.image}`;
-    // delete old file
-    fs.unlink(oldFilePath, () => { })
-
+  public static async uploadAvatar(user_id: string, file_name: string, fileID: any) {
+    const infoUser = await this.findUserById(user_id)
+    await deleteOnDrive(String(infoUser?.image))
+    deleteFile(`upload/${file_name}`)
     const updatedUser = await UserModel.findByIdAndUpdate(
       user_id,
-      { image: fileName },
+      { image: fileID },
       { new: true }
     );
 
@@ -45,8 +43,30 @@ class UserService {
     }
 
     return {
-      filePath: process.env.BASE_URL_BACKEND + '/images/' + fileName
+      filePath: `https://drive.google.com/thumbnail?id=${fileID}`
     }
+  }
+
+
+  public static async getMyAccount(user_id: string) {
+    const currentUser = await this.findUserById(user_id);
+    return {
+      lastName: currentUser?.last_name,
+      firstName: currentUser?.first_name,
+      title: currentUser?.title,
+      numberPhone: currentUser?.phone
+    };
+  }
+
+  public static async updateAccount(user_id: string, data: any) {
+    const updateAccount = await UserModel.findOneAndUpdate({ _id: user_id },
+      {
+        last_name: data.lastName,
+        first_name: data.firstName,
+        title: data.title,
+        phone: data.phone
+      }).lean()
+    return this.getMyAccount(user_id)
   }
 
   public static async findUserByGoogleId(google_id: string) {
