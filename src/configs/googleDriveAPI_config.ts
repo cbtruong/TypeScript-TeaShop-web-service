@@ -47,6 +47,23 @@ async function upFile(authClient: any, fileName: string, folderId: string, fileP
   });
 }
 
+// Function to upload multiple files to Google Drive
+async function uploadMultipleFiles(files: Array<{ fileName: string, filePath: string, mimeType: string }>, folderId: string) {
+  try {
+    const authClient = await authorize();
+
+    const uploadPromises = files.map(file =>
+      upFile(authClient, file.fileName, folderId, file.filePath, file.mimeType)
+    );
+
+    const fileIds = await Promise.all(uploadPromises);
+    return fileIds;  // Return the IDs of uploaded files
+  } catch (error) {
+    console.error('Error uploading files:', error);
+    throw error;
+  }
+}
+
 // Function to delete a file from Google Drive by file_id
 async function deleteFile(authClient: any, file_id: string): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -62,23 +79,36 @@ async function deleteFile(authClient: any, file_id: string): Promise<void> {
   });
 }
 
-// Combined function to authorize and upload a file
-async function uploadToDrive(fileName: string, folderId: string, filePath: string, mimeType: string) {
+async function deleteMultipleFiles(fileIds: Array<string>) {
   try {
     const authClient = await authorize();
-    const file_id = await upFile(authClient, fileName, folderId, filePath, mimeType);
-    return file_id
+
+    const deletePromises = fileIds.map(id =>
+      deleteFile(authClient, id)
+    );
+
+    await Promise.all(deletePromises);
   } catch (error) {
-    console.error('Error uploading file:', error);
+    console.error('Error uploading files:', error);
+    throw error;
+  }
+}
+
+// Combined function to authorize and upload multiple files
+async function uploadToDrive(files: Array<{ fileName: string, filePath: string, mimeType: string }>, folderId: string) {
+  try {
+    const file_ids = await uploadMultipleFiles(files, folderId);
+    return file_ids;
+  } catch (error) {
+    console.error('Error uploading files:', error);
   }
 }
 
 // Function to delete a file from Google Drive
-async function deleteOnDrive(fileId: string): Promise<void> {
+async function deleteOnDrive(fileIds: Array<string>): Promise<void> {
   try {
-    const authClient = await authorize();
-    await deleteFile(authClient, fileId);
-    console.log(`File with ID ${fileId} deleted successfully.`);
+    await deleteMultipleFiles(fileIds);
+    console.log(`File with ID ${fileIds} deleted successfully.`);
   } catch (error) {
     console.error('Error deleting file:', error);
   }
