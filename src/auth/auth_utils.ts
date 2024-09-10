@@ -4,6 +4,7 @@ import { AuthFailureError, NotFoundError } from "../core/error_response";
 import KeyTokenService from "../services/keyToken_service";
 import crypto from 'crypto'
 import JWT from "jsonwebtoken";
+import UserService from "../services/user_service";
 
 const HEADER = {
   API_KEY: `x-api-key`,
@@ -11,7 +12,25 @@ const HEADER = {
   PUBLIC_KEY: `public-key`
 }
 
-interface CustomRequest extends Request { keyStore?: any; }
+interface CustomRequest extends Request { keyStore?: any; roleAccount?: any }
+
+const checkRole = (roles: Array<string>) => {
+  return (req: CustomRequest, res: Response, next: NextFunction) => {
+    if (!req.roleAccount) {
+      return res.status(401).json({
+        message: 'Forbidden Error',
+      })
+
+    }
+    if (!roles.includes(req.roleAccount)) {
+      return res.status(401).json({
+        message: 'Permission denied',
+      })
+    }
+
+    return next()
+  }
+}
 
 const authentication = asyncHandler(async (req: CustomRequest, res: Response, next: NextFunction) => {
   // 1 - verifytoken console.log(req.headers)
@@ -37,7 +56,11 @@ const authentication = asyncHandler(async (req: CustomRequest, res: Response, ne
   const keyStoreUserId = await KeyTokenService.findByUserId(userId)
   if (!keyStoreUserId) throw new NotFoundError('Not found keyStore')
 
+  // 4 - get role 
+  const roleAccount = await UserService.getRole(userId)
+
   req.keyStore = keyStoreUserId
+  req.roleAccount = roleAccount
   return next()
 })
 
@@ -48,5 +71,6 @@ const verify = (token: string, publicKey: string) => {
 
 export {
   authentication,
-  verify
+  verify,
+  checkRole
 }

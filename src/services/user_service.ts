@@ -5,7 +5,13 @@ import { deleteFile } from "../untils"
 import { deleteOnDrive } from "../configs/googleDriveAPI_config"
 
 class UserService {
-  public async createNewUser({ first_name = '', last_name = '', email = null, password = '', image = '', types_customer = 'REGULAR', role = 'CUSTOMER', address = '', phone = '', state = '', google_id = '' }: any) {
+
+  public static async getRole(user_id: string) {
+    const currentUser = await UserService.findUserById(user_id)
+    return currentUser?.role
+  }
+
+  public async createNewUser({ first_name = '', last_name = '', email = null, password = '', image = '', types_customer = 'REGULAR', role = 'user', address = '', phone = '', state = '', google_id = '' }: any) {
     const newUser = new UserModel({
       first_name: first_name || extractUsernameFromEmail(email),
       last_name: last_name,
