@@ -36,8 +36,8 @@ class UserService {
 
   public static async uploadAvatar(user_id: string, file_name: string, fileID: any) {
     const infoUser = await this.findUserById(user_id)
-    await deleteOnDrive(String(infoUser?.image))
-    deleteFile(`upload/${file_name}`)
+    await deleteOnDrive([String(infoUser?.image)])
+    deleteFile([`upload/${file_name}`])
     const updatedUser = await UserModel.findByIdAndUpdate(
       user_id,
       { image: fileID },

@@ -27,7 +27,7 @@ const userSchema: Schema<IUser> = new mongoose.Schema({
   image: { type: String },
   types_customer: { type: String },
   address: { type: String },
-  role: { type: String, required: true }, // ?: don't need
+  role: { type: String, required: true },
   status_active: { type: Boolean, default: true }, // ?
   create_date: { type: Date, default: Date.now },
   end_date: { type: Date }, // => ban_date

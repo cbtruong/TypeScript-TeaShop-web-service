@@ -4,6 +4,8 @@ import { CREATED, OK } from '../core/success_response';
 import UserService, { UserAboutServices, UserAddressServices } from '../services/user_service';
 import { IUserAbout, IUserAdress, UserAddressModel } from '../models/user_model';
 import { FOLDER_ID, uploadToDrive } from '../configs/googleDriveAPI_config';
+import deleteMultipleFilesOnLocal from '../untils/file/deleteFile';
+import { file } from 'googleapis/build/src/apis/file';
 
 interface CustomRequest extends Request {
   keyStore?: any;
@@ -31,14 +33,29 @@ class UserController {
   }
 
   public async uploadAvatar(req: CustomRequest, res: Response) {
-    if (!req.file) {
-      throw new BadRequestError('No file uploaded');
+    if (!req.files || req.files.length !== 1) {
+      const filePaths = (req.files as Array<Express.Multer.File>).map((file) => 'upload/' + file.filename);
+      deleteMultipleFilesOnLocal(filePaths)
+      throw new BadRequestError('invalid file');
     }
-    const file = req.file
-    const file_id = await uploadToDrive(file.originalname, FOLDER_ID.uploads, file.path, file.mimetype)
+
+    const files = req.files as Array<Express.Multer.File>;
+    const fileDetails = files.map(file => ({
+      fileName: file.originalname,
+      filePath: file.path,
+      mimeType: file.mimetype
+    }));
+
+    const fileIds = await uploadToDrive(fileDetails, FOLDER_ID.uploads);
+
+    // Check if fileIds is defined and has the expected number of IDs
+    if (!fileIds || fileIds.length === 0) {
+      throw new BadRequestError('Failed to upload files to Google Drive');
+    }
+
     new OK({
       message: 'File uploaded successfully',
-      metadata: await UserService.uploadAvatar(req.keyStore.user_id, file.filename, file_id)
+      metadata: await UserService.uploadAvatar(req.keyStore.user_id, files[0].filename, fileIds[0])
     }).send(res);
   }
   public async getInfo(req: CustomRequest, res: Response) {
