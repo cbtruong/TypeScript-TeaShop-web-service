@@ -3,32 +3,37 @@ import { asyncHandler } from "../../helpers/async_handler";
 import { authentication } from "../../auth/auth_utils";
 import AuthControler from "../../controllers/auth_controller";
 import passport from "passport";
+import '../../configs/passport_config' // config passport
 
 const router = express.Router()
 
-// login with local
-router.post('/auth/register', asyncHandler(new AuthControler().register))
-router.post('/auth/login', asyncHandler(new AuthControler().login))
 
-// config passport
-import '../../configs/passport_config'
+
+router.post('/register', asyncHandler(new AuthControler().register))
+
+router.post('/login', asyncHandler(new AuthControler().login))//reset password with token 
+
+router.post('/password/resetWithToken', asyncHandler(new AuthControler().resetPasswordWithToken))
+
+router.post('/password/forgot', asyncHandler(new AuthControler().passwordForgot))
+
+router.post('/password/reset', authentication, asyncHandler(new AuthControler().passwordReset))
 
 // login with google
-router.get('/auth/google', passport.authenticate('google', {
+router.get('/google', passport.authenticate('google', {
   scope: ['profile']
 }));
-router.get('/auth/google/callback',
+
+// callback when finsh handler with google
+router.get('/google/callback',
   passport.authenticate('google', { failureRedirect: '/' }),
   function(req: Request, res: Response) {
     // Successful authentication, redirect home.
     res.redirect('/');
   });
 
-// authencation 
-router.use(authentication)
+router.post('/logout', authentication, asyncHandler(new AuthControler().logout))
 
-// logout
-router.post('/auth/logout', asyncHandler(new AuthControler().logout))
-
+router.post('/token', asyncHandler(new AuthControler().checkToken))
 
 export default router

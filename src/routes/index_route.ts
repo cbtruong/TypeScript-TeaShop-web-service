@@ -1,29 +1,29 @@
 import express, { Response, Request } from 'express'
+
 import authRouter from './auth/auth_route'
+import userRouter from './user/user_routes'
+import productRouter from './product/product_router'
+import blogRouter from './blog/blog_route'
+
 import { checkApiKey, checkPermissions } from '../auth/check_auth'
+import { blogger } from 'googleapis/build/src/apis/blogger'
 
 const router = express.Router()
 
+// for auth router
+router.use('/auth', checkApiKey, checkPermissions('user'), authRouter)
 
-// check apikey
-//router.use(checkApiKey)
+// for user router
+router.use('/user', checkApiKey, checkPermissions('user'), userRouter)
 
-// check permission
-//router.use(checkPermissions('read'))
+// for product router
+router.use('/product', productRouter)
 
-
-// test api 
+// for blog Router
+router.use('/blog', blogRouter)
+// test router
 router.get('/', (req: Request, res: Response) => {
-  if (req.user)
-    return res.status(200).json({
-      metadata: req.user,
-    })
-
-  return res.status(200).json({
-    message: 'Hello world'
-  })
+  console.log(req.params)
 })
 
-// for auth router
-router.use('/', authRouter)
 export default router

@@ -8,8 +8,12 @@ import helmet from 'helmet'
 import session from 'express-session'
 import indexRouter from './routes/index_route'
 import passport from 'passport'
+import path from 'path'
 
 const app = express()
+
+// public
+app.use('/images', express.static(path.join(__dirname, 'uploads')));
 
 // init middleware
 app.use(morgan('dev'))
@@ -22,6 +26,10 @@ app.use(passport.authenticate('session'));
 
 // init database
 import './dbs/init_mongodb'
+import swaggerDocs from './untils/swagger'
+
+// init swager
+swaggerDocs(app)
 
 // init routes
 app.use('/', indexRouter)
@@ -40,4 +48,6 @@ app.use((error: any, req: Request, res: Response, next: NextFunction) => {
     code: statusCode,
     message: error.message || 'Internal Server Error',
   });
-}); export default app
+});
+
+export default app

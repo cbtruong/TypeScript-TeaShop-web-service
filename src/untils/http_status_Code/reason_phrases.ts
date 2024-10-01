@@ -117,7 +117,7 @@ const ReasonPhrases = {
   /**
    * Official Documentation @ https://tools.ietf.org/html/rfc7231#section-6.5.5
    *
-   * The request method is known by the server but has been disabled and cannot be used. For example, an API may forbid DELETE-ing a resource. The two mandatory methods, GET and HEAD, must never be disabled and should not return this error code.
+   * The request method is known by the server but has been disabled and cannot be used. For example, an API may 
    */
   METHOD_NOT_ALLOWED: "Method Not Allowed",
   /**
