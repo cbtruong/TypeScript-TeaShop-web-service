@@ -8,6 +8,12 @@ import '../../configs/passport_config' // config passport
 const router = express.Router()
 
 
+interface User {
+  metadata: {
+    accessToken: string;
+    refreshToken: string;
+  };
+}
 
 router.post('/register', asyncHandler(new AuthControler().register))
 
@@ -24,13 +30,21 @@ router.get('/google', passport.authenticate('google', {
   scope: ['profile']
 }));
 
-// callback when finsh handler with google
+
+
+
 router.get('/google/callback',
   passport.authenticate('google', { failureRedirect: '/' }),
-  function(req: Request, res: Response) {
-    // Successful authentication, redirect home.
-    res.redirect('/');
-  });
+  function(req, res) {
+    const user: any = req.user as User
+    const accessToken = user.metadata.tokens.accessToken;
+    const refreshToken = user.metadata.tokens.refreshToken;
+    // Redirect to the frontend with user info and tokens
+    res.redirect(`http://localhost:5173/auth/login?accessToken=${accessToken}&refreshToken=${refreshToken}`);
+  }
+);
+
+
 
 router.post('/logout', authentication, asyncHandler(new AuthControler().logout))
 

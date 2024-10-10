@@ -9,6 +9,7 @@ import session from 'express-session'
 import indexRouter from './routes/index_route'
 import passport from 'passport'
 import path from 'path'
+import cors from 'cors'
 
 const app = express()
 
@@ -23,7 +24,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(session({ secret: 'keyboard cat', resave: false, saveUninitialized: false, }));
 app.use(passport.authenticate('session'));
-
+app.use(cors())
 // init database
 import './dbs/init_mongodb'
 import swaggerDocs from './untils/swagger'

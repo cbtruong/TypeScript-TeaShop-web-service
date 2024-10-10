@@ -11,7 +11,7 @@ import { blogger } from 'googleapis/build/src/apis/blogger'
 const router = express.Router()
 
 // for auth router
-router.use('/auth', checkApiKey, checkPermissions('user'), authRouter)
+router.use('/auth', authRouter)
 
 // for user router
 router.use('/user', checkApiKey, checkPermissions('user'), userRouter)
